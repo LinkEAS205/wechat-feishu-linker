@@ -42,18 +42,20 @@
     "@larksuiteoapi/node-sdk": "^1.74.0"
   },
   "meta": {
-    "title": "WeChat ClawBot (iLink)",
-    "description": "Bind WeChat by QR in the UI; chat with DSH from WeChat and reuse existing workspaces and sessions."
+    "title": "微信 / 飞书 → DSH",
+    "description": "Bind WeChat or Feishu by QR in the UI; chat with DSH from either client and reuse existing workspaces and sessions."
   },
-  "icon": "./icon.svg",
+  "icon": "./icon.png",
   "files": [
     "src",
     "client.js",
-    "icon.svg",
+    "icon.png",
     "scripts",
     "docs",
     "cordis.patch.yml",
-    "README.md"
+    "README.md",
+    "README.zh-CN.md",
+    "LICENSE"
   ],
   "scripts": {
     "test": "node --test",
