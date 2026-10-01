@@ -1,0 +1,92 @@
+# Bundle patch for wechat-feishu-linker.
+#
+# Applied when a DSH profile lists this package in `dsh.profile.bundles`.
+# Three plugin rows are inserted:
+#
+#   wechat-ilink          the iLink channel service (ctx.wechatIlink + wechat_send tool)
+#   feishu                the Feishu channel service (long connection)
+#   wechat-ilink-bridge   inbound message -> DSH agent session -> reply relay
+#
+# ONE bridge row serves every channel: it resolves the channel from the
+# conversation, so a second channel is a second service row and nothing else.
+#
+# Users override any value from their own profile cordis.patch.yml: a later
+# layer replaces the whole `config` value of the matching row id.
+- insert:
+    - id: wechat-ilink
+      name: 'wechat-feishu-linker'
+      config:
+        # Empty dataDir resolves to $DSH_HOME/wechat-ilink.
+        dataDir: ''
+        autoConnect: true
+        toolEnabled: true
+        pollTimeoutMs: 45000
+        requestTimeoutMs: 30000
+        maxMessageLength: 1800
+        baseUrl: 'https://ilinkai.weixin.qq.com'
+        # --- RESERVED: accepted but inert in this version (see src/config.js) ---
+        accounts: []
+        mediaEnabled: true
+        mediaMaxBytes: 20971520
+        mediaCacheDir: ''
+        cdnBaseUrl: 'https://novac2c.cdn.weixin.qq.com/c2c'
+    - id: feishu
+      name: 'wechat-feishu-linker/feishu'
+      config:
+        enabled: true
+        # The app id only. The app secret is a credential and lives in the data
+        # directory (feishu.json), never in the profile config.
+        appId: ''
+        # feishu = open.feishu.cn, lark = open.larksuite.com
+        domain: 'feishu'
+        dataDir: ''
+    - id: wechat-ilink-bridge
+      name: 'wechat-feishu-linker/bridge'
+      config:
+        enabled: true
+        sessionMode: per-peer
+        dmPolicy: open
+        allowlist: []
+        groupPolicy: disabled
+        groupAllowlist: []
+        agentPreset: ''
+        # Defaults for sessions this bridge creates. A conversation that chose
+        # for itself (via /model, /effort, /permission) keeps its own choice, so
+        # these are safe to change at any time.
+        provider: ''
+        model: ''
+        reasoningEffort: ''
+        permissionPreset: ''
+        replyMaxChars: 1800
+        # compact = the turn's text goes out as it lands; quiet = the whole turn
+        # is merged into one reply at turn/end. Tool calls and reasoning are
+        # never mirrored in either. Neither sends one message per fragment: the
+        # conversation window is short-lived, and a fragment-per-message turn
+        # spends it long before the answer is ready.
+        displayMode: compact
+        # How long compact coalesces fragments before sending; 0 restores
+        # fragment-per-message.
+        compactFlushMs: 8000
+        typingIndicator: true
+        # sendtyping is a one-shot with no duration (the client shows it for a
+        # few seconds), so it is re-signalled while a turn runs; 0 disables it.
+        typingRefreshMs: 5000
+        commandPrefix: '/'
+        # How long a mirrored approval/question card waits for a WeChat reply.
+        cardTimeoutMs: 1800000
+        # Per-channel overrides for the DELIVERY settings above. These describe
+        # how a transport behaves rather than how you like replies: WeChat meters
+        # messages per contact and closes a conversation window, Feishu does
+        # neither, so one shared value always compromises one of them.
+        #
+        # Overridable keys: displayMode, compactFlushMs, replyMaxChars,
+        # typingIndicator, typingRefreshMs. Anything not listed falls back to the
+        # top-level value, so this block is optional and additive.
+        channels: {}
+        # Example — send less often on WeChat, more promptly on Feishu:
+        # channels:
+        #   wechat-ilink:
+        #     displayMode: quiet
+        #   feishu:
+        #     displayMode: compact
+        #     compactFlushMs: 3000

@@ -1,0 +1,31 @@
+# Dependencies
+#
+# The Feishu long connection needs @larksuiteoapi/node-sdk, installed beside the
+# plugin rather than inside it — see README §安装 for why the host's realpath
+# resolution makes the plugin's own node_modules the wrong place. Neither
+# location is ever committed.
+node_modules/
+.npm-cache/
+pnpm-lock.yaml
+package-lock.json
+
+# Credentials and runtime state
+#
+# The plugin keeps its credentials in the DSH data directory, never in the
+# repository, but a stray copy here must not be committable either.
+*.credentials.yaml
+account.json
+feishu.json
+sync-buf.json
+send-log.jsonl
+
+# Editor and OS noise
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Local scratch
+*.log
+tmp/

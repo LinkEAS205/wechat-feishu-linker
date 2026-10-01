@@ -1,0 +1,77 @@
+{
+  "name": "wechat-feishu-linker",
+  "version": "0.2.0",
+  "private": false,
+  "description": "DeepSeek Harness (DSH) plugin: bridge WeChat ClawBot (Tencent iLink) and Feishu/Lark to DSH agent sessions, from one settings page and one relay.",
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "cordis",
+    "wechat",
+    "weixin",
+    "ilink",
+    "clawbot",
+    "feishu",
+    "lark",
+    "chatbot",
+    "bridge"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "main": "src/index.js",
+  "exports": {
+    ".": {
+      "default": "./src/index.js"
+    },
+    "./bridge": {
+      "default": "./src/bridge/index.js"
+    },
+    "./feishu": {
+      "default": "./src/service-feishu.js"
+    },
+    "./client": {
+      "default": "./client.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "@larksuiteoapi/node-sdk": "^1.74.0"
+  },
+  "meta": {
+    "title": "WeChat ClawBot (iLink)",
+    "description": "Bind WeChat by QR in the UI; chat with DSH from WeChat and reuse existing workspaces and sessions."
+  },
+  "icon": "./icon.svg",
+  "files": [
+    "src",
+    "client.js",
+    "icon.svg",
+    "scripts",
+    "docs",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "probe": "node scripts/probe-ilink.mjs",
+    "live": "node scripts/live-check.mjs",
+    "login": "node scripts/login.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-settings-general",
+        "@deepseek-ai/dsh-client-ui-settings",
+        "@deepseek-ai/dsh-client-ui-renderer"
+      ]
+    }
+  }
+}

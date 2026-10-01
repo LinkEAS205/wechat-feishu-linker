@@ -1,0 +1,19 @@
+# Normalise line endings on every platform.
+#
+# Without this, Git converts LF to CRLF on checkout, which turns every file into
+# a spurious diff for anyone on a different platform and can break the shebang
+# handling in scripts/. The repository stores LF; the working copy gets whatever
+# the platform prefers for the files where that is safe.
+* text=auto eol=lf
+
+# Windows scripts genuinely want CRLF, because PowerShell and cmd are happier
+# with it and Git's autocrlf would otherwise flip them back and forth.
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Binary: never touch these.
+*.png binary
+*.jpg binary
+*.ico binary
+*.svg text eol=lf
